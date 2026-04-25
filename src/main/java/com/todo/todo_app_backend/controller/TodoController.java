@@ -96,4 +96,9 @@ public class TodoController {
             return "Raw query error: " + e.getClass().getSimpleName() + " - " + e.getMessage();
         }
     }
+
+    @GetMapping("/public-debug")
+    public String publicDebug() {
+        return "Public endpoint is reachable! Time: " + java.time.LocalDateTime.now();
+    }
 }

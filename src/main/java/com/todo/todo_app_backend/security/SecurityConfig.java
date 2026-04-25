@@ -36,6 +36,7 @@ public class SecurityConfig {
                         // Auth endpoints (public)
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/todos/public-debug").permitAll()
 
                         // Contact endpoints (keep as is)
                         .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
