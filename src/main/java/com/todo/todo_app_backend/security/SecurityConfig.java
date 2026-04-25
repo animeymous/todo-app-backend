@@ -1,4 +1,5 @@
 package com.todo.todo_app_backend.security;
+
 import com.todo.todo_app_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,22 +24,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService; // Add this
+    private final UserDetailsService userDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;  // Inject instead of creating manually
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(jwtUtil, userDetailsService); // Pass both
-
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Auth endpoints (public)
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/todos/**").authenticated()
+
+                        // Public debug endpoint - SPECIFIC rule FIRST
                         .requestMatchers(HttpMethod.GET, "/api/v1/todos/public-debug").permitAll()
 
-                        // Contact endpoints (keep as is)
+                        // TODO endpoints (require authentication)
+                        .requestMatchers("/api/v1/todos/**").authenticated()
+
+                        // Contact endpoints
                         .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/contact").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/contact/email").hasRole("ADMIN")
