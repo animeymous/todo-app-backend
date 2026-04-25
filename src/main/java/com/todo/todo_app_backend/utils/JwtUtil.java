@@ -44,7 +44,6 @@ public class JwtUtil {
         try {
             Jwts.parser()
                     .verifyWith(getSigningKey())
-                    .clockSkewSeconds(3600)  // ← ADD THIS LINE
                     .build()
                     .parseSignedClaims(token);
             return true;

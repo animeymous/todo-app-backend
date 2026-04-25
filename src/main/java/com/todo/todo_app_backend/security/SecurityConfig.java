@@ -24,33 +24,33 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
-    private final JwtAuthFilter jwtAuthFilter;  // Inject instead of creating manually
+    private final UserDetailsService userDetailsService; // Add this
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        JwtAuthFilter jwtAuthFilter = new JwtAuthFilter(jwtUtil, userDetailsService); // Pass both
+
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Auth endpoints (public)
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
 
-                        // Public debug endpoint - SPECIFIC rule FIRST
-                        .requestMatchers(HttpMethod.GET, "/api/v1/todos/public-debug").permitAll()
-
                         // TODO endpoints (require authentication)
-                        .requestMatchers("/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/todos/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/todos/**").authenticated()
 
-                        // Contact endpoints
                         .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/contact").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/contact/email").hasRole("ADMIN")
-
-                        // Swagger (public)
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                        // Everything else requires authentication
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

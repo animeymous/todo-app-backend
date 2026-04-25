@@ -62,43 +62,4 @@ public class TodoController {
         return todoService.updateTodoStatus(id, status);
     }
 
-    @GetMapping("/debug")
-    public String debug() {
-        try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            return "User: " + email + " | Auth: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        } catch (Exception e) {
-            return "Error: " + e.getMessage();
-        }
-    }
-
-    @GetMapping("/debug-db")
-    public String debugDb() {
-        try {
-            String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            long todoCount = todoRepository.count();
-
-            return "User: " + email + " | User ID: " + user.getId() + " | Total todos in DB: " + todoCount;
-        } catch (Exception e) {
-            return "Error: " + e.getClass().getSimpleName() + " - " + e.getMessage();
-        }
-    }
-
-    @GetMapping("/debug-raw")
-    public String debugRaw() {
-        try {
-            long count = todoRepository.count();
-            return "Raw query works. Total todos in DB: " + count;
-        } catch (Exception e) {
-            return "Raw query error: " + e.getClass().getSimpleName() + " - " + e.getMessage();
-        }
-    }
-
-    @GetMapping("/public-debug")
-    public String publicDebug() {
-        return "Public endpoint is reachable! Time: " + java.time.LocalDateTime.now();
-    }
 }
