@@ -5,4 +5,5 @@ import com.todo.todo_app_backend.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
