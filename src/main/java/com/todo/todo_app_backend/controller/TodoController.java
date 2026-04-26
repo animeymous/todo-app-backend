@@ -32,6 +32,14 @@ public class TodoController {
         return ApiResponseDto.success("Todos retrieved successfully", todos, httpRequest.getRequestURI());
     }
 
+    // ✅ MOVED THIS UP - Specific mapping for /deleted BEFORE the {id} mapping
+    @GetMapping("/deleted")
+    public ApiResponseDto<List<TodoResponseDto>> getDeletedTodos(HttpServletRequest httpRequest) {
+        List<TodoResponseDto> deletedTodos = todoService.getDeletedTodos();
+        return ApiResponseDto.success("Deleted todos retrieved successfully", deletedTodos, httpRequest.getRequestURI());
+    }
+
+    // ✅ This comes AFTER - Generic mapping with path variable
     @GetMapping("/{id}")
     public ApiResponseDto<TodoResponseDto> getTodoById(@PathVariable Long id, HttpServletRequest httpRequest) {
         TodoResponseDto todo = todoService.getTodoById(id);
@@ -40,8 +48,8 @@ public class TodoController {
 
     @PutMapping("/{id}")
     public ApiResponseDto<TodoResponseDto> updateTodo(@PathVariable Long id,
-                                                   @RequestBody UpdateTodoRequestDto request,
-                                                   HttpServletRequest httpRequest) {
+                                                      @RequestBody UpdateTodoRequestDto request,
+                                                      HttpServletRequest httpRequest) {
         TodoResponseDto updatedTodo = todoService.updateTodo(id, request);
         return ApiResponseDto.success("Todo updated successfully", updatedTodo, httpRequest.getRequestURI());
     }
@@ -60,8 +68,8 @@ public class TodoController {
 
     @PatchMapping("/{id}/status")
     public ApiResponseDto<TodoResponseDto> updateTodoStatus(@PathVariable Long id,
-                                                         @RequestParam TodoStatus status,
-                                                         HttpServletRequest httpRequest) {
+                                                            @RequestParam TodoStatus status,
+                                                            HttpServletRequest httpRequest) {
         TodoResponseDto updatedTodo = todoService.updateTodoStatus(id, status);
         return ApiResponseDto.success("Todo status updated successfully", updatedTodo, httpRequest.getRequestURI());
     }

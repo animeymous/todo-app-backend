@@ -2,6 +2,7 @@ package com.todo.todo_app_backend.service;
 
 import com.todo.todo_app_backend.dto.*;
 import com.todo.todo_app_backend.entity.Role;
+import com.todo.todo_app_backend.entity.Todo;
 import com.todo.todo_app_backend.entity.User;
 import com.todo.todo_app_backend.dto.RegisterRequestDto;
 import com.todo.todo_app_backend.repository.UserRepository;
@@ -47,5 +48,17 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user);
         return new AuthResponseDto(token);
+    }
+
+    private TodoResponseDto convertToDto(Todo todo) {
+        return TodoResponseDto.builder()
+                .id(todo.getId())
+                .heading(todo.getHeading())
+                .description(todo.getDescription())
+                .status(todo.getStatus())
+                .createdAt(todo.getCreatedAt())
+                .updatedAt(todo.getUpdatedAt())
+                .dueDate(todo.getDueDate())
+                .build();
     }
 }

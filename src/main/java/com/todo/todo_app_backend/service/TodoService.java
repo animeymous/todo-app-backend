@@ -158,4 +158,16 @@ public class TodoService {
         Todo updatedTodo = todoRepository.save(todo);
         return mapToDto(updatedTodo);
     }
+
+    public List<TodoResponseDto> getDeletedTodos() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // This method should find todos where is_deleted = true
+        List<Todo> deletedTodos = todoRepository.findByUserAndIsDeletedTrue(user);
+        return deletedTodos.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
 }

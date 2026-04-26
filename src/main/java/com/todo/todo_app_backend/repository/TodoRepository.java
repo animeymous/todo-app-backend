@@ -17,4 +17,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     // Find todo by id and user (including deleted ones)
     java.util.Optional<Todo> findByIdAndUser(Long id, User user);
+
+    // Find only soft-deleted todos for a user
+    List<Todo> findByUserAndIsDeletedTrue(User user);
 }
