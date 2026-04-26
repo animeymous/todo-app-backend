@@ -170,4 +170,18 @@ public class TodoService {
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void permanentDeleteTodo(Long id) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Find the todo (including deleted ones)
+        Todo todo = todoRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Todo not found with id: " + id));
+
+        // Permanently delete from database
+        todoRepository.delete(todo);
+    }
 }

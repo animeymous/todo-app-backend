@@ -73,4 +73,10 @@ public class TodoController {
         TodoResponseDto updatedTodo = todoService.updateTodoStatus(id, status);
         return ApiResponseDto.success("Todo status updated successfully", updatedTodo, httpRequest.getRequestURI());
     }
+
+    @DeleteMapping("/{id}/permanent")
+    public ApiResponseDto<Void> permanentDeleteTodo(@PathVariable Long id, HttpServletRequest httpRequest) {
+        todoService.permanentDeleteTodo(id);
+        return ApiResponseDto.success("Todo permanently deleted", httpRequest.getRequestURI());
+    }
 }
