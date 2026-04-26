@@ -1,16 +1,14 @@
 package com.todo.todo_app_backend.controller;
 
+import com.todo.todo_app_backend.dto.ApiResponseDto;
 import com.todo.todo_app_backend.dto.CreateTodoRequestDto;
 import com.todo.todo_app_backend.dto.TodoResponseDto;
 import com.todo.todo_app_backend.dto.UpdateTodoRequestDto;
 import com.todo.todo_app_backend.entity.TodoStatus;
-import com.todo.todo_app_backend.entity.User;
-import com.todo.todo_app_backend.repository.TodoRepository;
-import com.todo.todo_app_backend.repository.UserRepository;
 import com.todo.todo_app_backend.service.TodoService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -20,46 +18,51 @@ import java.util.List;
 public class TodoController {
 
     private final TodoService todoService;
-    private final UserRepository userRepository;
-    private final TodoRepository todoRepository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TodoResponseDto createTodo(@RequestBody CreateTodoRequestDto request) {
-        return todoService.createTodo(request);
+    public ApiResponseDto<TodoResponseDto> createTodo(@RequestBody CreateTodoRequestDto request, HttpServletRequest httpRequest) {
+        TodoResponseDto todo = todoService.createTodo(request);
+        return ApiResponseDto.success("Todo created successfully", todo, httpRequest.getRequestURI());
     }
 
     @GetMapping
-    public List<TodoResponseDto> getUserTodos() {
-        return todoService.getUserTodos();
+    public ApiResponseDto<List<TodoResponseDto>> getUserTodos(HttpServletRequest httpRequest) {
+        List<TodoResponseDto> todos = todoService.getUserTodos();
+        return ApiResponseDto.success("Todos retrieved successfully", todos, httpRequest.getRequestURI());
     }
 
     @GetMapping("/{id}")
-    public TodoResponseDto getTodoById(@PathVariable Long id) {
-        return todoService.getTodoById(id);
+    public ApiResponseDto<TodoResponseDto> getTodoById(@PathVariable Long id, HttpServletRequest httpRequest) {
+        TodoResponseDto todo = todoService.getTodoById(id);
+        return ApiResponseDto.success("Todo retrieved successfully", todo, httpRequest.getRequestURI());
     }
 
     @PutMapping("/{id}")
-    public TodoResponseDto updateTodo(@PathVariable Long id, @RequestBody UpdateTodoRequestDto request) {
-        return todoService.updateTodo(id, request);
+    public ApiResponseDto<TodoResponseDto> updateTodo(@PathVariable Long id,
+                                                   @RequestBody UpdateTodoRequestDto request,
+                                                   HttpServletRequest httpRequest) {
+        TodoResponseDto updatedTodo = todoService.updateTodo(id, request);
+        return ApiResponseDto.success("Todo updated successfully", updatedTodo, httpRequest.getRequestURI());
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTodo(@PathVariable Long id) {
+    public ApiResponseDto<Void> deleteTodo(@PathVariable Long id, HttpServletRequest httpRequest) {
         todoService.deleteTodo(id);
+        return ApiResponseDto.success("Todo deleted successfully", httpRequest.getRequestURI());
     }
 
     @PatchMapping("/{id}/restore")
-    public TodoResponseDto restoreTodo(@PathVariable Long id) {
-        return todoService.restoreTodo(id);
+    public ApiResponseDto<TodoResponseDto> restoreTodo(@PathVariable Long id, HttpServletRequest httpRequest) {
+        TodoResponseDto restoredTodo = todoService.restoreTodo(id);
+        return ApiResponseDto.success("Todo restored successfully", restoredTodo, httpRequest.getRequestURI());
     }
 
     @PatchMapping("/{id}/status")
-    public TodoResponseDto updateTodoStatus(
-            @PathVariable Long id,
-            @RequestParam TodoStatus status) {
-        return todoService.updateTodoStatus(id, status);
+    public ApiResponseDto<TodoResponseDto> updateTodoStatus(@PathVariable Long id,
+                                                         @RequestParam TodoStatus status,
+                                                         HttpServletRequest httpRequest) {
+        TodoResponseDto updatedTodo = todoService.updateTodoStatus(id, status);
+        return ApiResponseDto.success("Todo status updated successfully", updatedTodo, httpRequest.getRequestURI());
     }
-
 }

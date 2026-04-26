@@ -1,8 +1,11 @@
 package com.todo.todo_app_backend.controller;
 
-import com.todo.todo_app_backend.dto.*;
+import com.todo.todo_app_backend.dto.ApiResponseDto;
+import com.todo.todo_app_backend.dto.AuthResponseDto;
+import com.todo.todo_app_backend.dto.LoginRequestDto;
 import com.todo.todo_app_backend.dto.RegisterRequestDto;
 import com.todo.todo_app_backend.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +17,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public AuthResponseDto signup(@RequestBody RegisterRequestDto request) {
-        System.out.println(request);
-        return authService.signup(request);
+    public ApiResponseDto<AuthResponseDto> signup(@RequestBody RegisterRequestDto request, HttpServletRequest httpRequest) {
+        AuthResponseDto response = authService.signup(request);
+        return ApiResponseDto.success("User registered successfully", response, httpRequest.getRequestURI());
     }
 
     @PostMapping("/login")
-    public AuthResponseDto login(@RequestBody LoginRequestDto request) {
-        System.out.println(request);
-        return authService.login(request);
+    public ApiResponseDto<AuthResponseDto> login(@RequestBody LoginRequestDto request, HttpServletRequest httpRequest) {
+        AuthResponseDto response = authService.login(request);
+        return ApiResponseDto.success("Login successful", response, httpRequest.getRequestURI());
     }
 }
