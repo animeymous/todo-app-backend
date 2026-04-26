@@ -15,7 +15,7 @@ public class WebConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                "https://todo-frontend.vercel.app"
+                                "https://todo-app-frontend-tan-beta.vercel.app/"
                         )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                         .allowedHeaders("*")
